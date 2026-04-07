@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+sqlalchemy
+scikit-learn
+mlflow
+python-dotenv
+beautifulsoup4
+requests
