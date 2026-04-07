@@ -1,0 +1,7 @@
+# .gitignore
+__pycache__/
+.env
+data/
+mlruns/
+*.db
+.pytest_cache/
