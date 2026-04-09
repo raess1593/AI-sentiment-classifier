@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sentiment Classifier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="badge">AI SENTIMENT CLASSIFIER</span>
+        <h1>Analyze product reviews in seconds.</h1>
+        <p>
+          Paste any review below and the model will predict whether the tone is positive or negative.
+        </p>
+        <div class="info-row">
+          <div class="info-card">
+            <strong>5000+</strong>
+            <span>reviews trained</span>
+          </div>
+          <div class="info-card">
+            <strong>FastAPI</strong>
+            <span>backend API</span>
+          </div>
+          <div class="info-card">
+            <strong>MLflow</strong>
+            <span>model tracking</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <span class="panel-label">Live demo</span>
+            <h2>Try the model</h2>
+          </div>
+          <span id="apiStatus" class="status-pill">Checking</span>
+        </div>
+
+        <textarea id="reviewInput" placeholder="Write a short review here..."></textarea>
+
+        <div class="button-row">
+          <button class="ghost-btn" data-sample="I love this product. The battery lasts forever and the quality is great.">Positive example</button>
+          <button class="ghost-btn" data-sample="This was a waste of money. It stopped working after one day.">Negative example</button>
+        </div>
+
+        <div class="button-row main-actions">
+          <button id="predictBtn" class="primary-btn">Analyze sentiment</button>
+          <button id="clearBtn" class="secondary-btn">Clear</button>
+        </div>
+
+        <div id="resultBox" class="result-box" hidden>
+          <span class="result-label">Prediction</span>
+          <h3 id="sentimentText">-</h3>
+          <p id="resultText">Your result will appear here.</p>
+          <div class="confidence-bar">
+            <div id="confidenceFill" class="confidence-fill"></div>
+          </div>
+          <small id="confidenceValue">0%</small>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
