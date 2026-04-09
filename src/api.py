@@ -69,6 +69,24 @@ def root():
     return FileResponse(index_file)
 
 
+@app.get("/styles.css", include_in_schema=False)
+def styles_file():
+    css_file = STATIC_DIR / "styles.css"
+    if not css_file.exists():
+        raise HTTPException(status_code=404, detail="styles.css not found.")
+
+    return FileResponse(css_file)
+
+
+@app.get("/app.js", include_in_schema=False)
+def js_file():
+    js_file_path = STATIC_DIR / "app.js"
+    if not js_file_path.exists():
+        raise HTTPException(status_code=404, detail="app.js not found.")
+
+    return FileResponse(js_file_path)
+
+
 @app.get("/health")
 def health_check():
     return {"status": "ok", "model_loaded": production_model is not None}
