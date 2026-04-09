@@ -3,51 +3,84 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sentiment Classifier</title>
+  <title>Sentiment Radar | AI Review Analyzer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <div class="bg-glow glow-left"></div>
+  <div class="bg-glow glow-right"></div>
+
   <main class="app-shell">
     <section class="hero">
-      <div class="hero-copy">
-        <span class="badge">AI SENTIMENT CLASSIFIER</span>
-        <h1>Analyze product reviews in seconds.</h1>
+      <div class="hero-copy reveal">
+        <span class="badge">NLP SENTIMENT ENGINE</span>
+        <h1>Turn raw reviews into clear sentiment signals.</h1>
         <p>
-          Paste any review below and the model will predict whether the tone is positive or negative.
+          A compact web interface powered by your FastAPI + MLflow model.
+          Paste text, run prediction, and inspect confidence in real time.
         </p>
         <div class="info-row">
           <div class="info-card">
             <strong>5000+</strong>
-            <span>reviews trained</span>
+            <span>labeled reviews</span>
           </div>
           <div class="info-card">
             <strong>FastAPI</strong>
-            <span>backend API</span>
+            <span>live prediction endpoint</span>
           </div>
           <div class="info-card">
             <strong>MLflow</strong>
-            <span>model tracking</span>
+            <span>experiment tracked model</span>
           </div>
+        </div>
+
+        <div class="vector-frame reveal delay-1">
+          <svg viewBox="0 0 600 260" role="img" aria-label="Vector sentiment dashboard illustration">
+            <defs>
+              <linearGradient id="lineA" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#52d5ab" />
+                <stop offset="100%" stop-color="#6db0ff" />
+              </linearGradient>
+              <linearGradient id="lineB" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#ff9a76" />
+                <stop offset="100%" stop-color="#ff5d7a" />
+              </linearGradient>
+            </defs>
+            <rect x="10" y="20" width="580" height="220" rx="24" fill="rgba(8,18,34,0.82)" stroke="rgba(255,255,255,0.16)" />
+            <path d="M44 167 C116 62, 170 210, 238 116 C303 40, 362 170, 442 102 C488 60, 532 88, 560 74" stroke="url(#lineA)" stroke-width="6" fill="none" stroke-linecap="round" />
+            <path d="M44 183 C100 136, 168 196, 236 170 C307 144, 364 212, 444 180 C500 158, 534 178, 560 170" stroke="url(#lineB)" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.8"/>
+            <circle cx="238" cy="116" r="10" fill="#52d5ab" />
+            <circle cx="444" cy="180" r="10" fill="#ff6f89" />
+            <rect x="68" y="52" width="96" height="28" rx="14" fill="rgba(82,213,171,0.15)" />
+            <text x="84" y="71" fill="#8de8cb" font-size="14" font-family="Manrope">Positive</text>
+            <rect x="422" y="196" width="96" height="28" rx="14" fill="rgba(255,111,137,0.15)" />
+            <text x="440" y="215" fill="#ff9eb1" font-size="14" font-family="Manrope">Negative</text>
+          </svg>
         </div>
       </div>
 
-      <div class="panel">
+      <div class="panel reveal delay-2">
         <div class="panel-header">
           <div>
             <span class="panel-label">Live demo</span>
-            <h2>Try the model</h2>
+            <h2>Analyze a review</h2>
           </div>
           <span id="apiStatus" class="status-pill">Checking</span>
         </div>
 
-        <textarea id="reviewInput" placeholder="Write a short review here..."></textarea>
+        <label class="field-label" for="reviewInput">Review text</label>
+        <textarea id="reviewInput" maxlength="1000" placeholder="Example: The camera quality is amazing, but battery life is disappointing..."></textarea>
+        <div class="meta-row">
+          <span class="hint">Use at least 20 characters for better signal.</span>
+          <span id="charCount" class="char-count">0/1000</span>
+        </div>
 
         <div class="button-row">
-          <button class="ghost-btn" data-sample="I love this product. The battery lasts forever and the quality is great.">Positive example</button>
-          <button class="ghost-btn" data-sample="This was a waste of money. It stopped working after one day.">Negative example</button>
+          <button class="ghost-btn" data-sample="I absolutely love this phone. The screen is sharp, battery lasts all day, and performance is super smooth.">Positive sample</button>
+          <button class="ghost-btn" data-sample="The headphones broke after one week, customer support ignored me, and the sound quality is poor.">Negative sample</button>
         </div>
 
         <div class="button-row main-actions">
@@ -56,18 +89,24 @@
         </div>
 
         <div id="resultBox" class="result-box" hidden>
-          <span class="result-label">Prediction</span>
-          <h3 id="sentimentText">-</h3>
+          <div class="result-head">
+            <div>
+              <span class="result-label">Prediction</span>
+              <h3 id="sentimentText">-</h3>
+            </div>
+            <div class="confidence-gauge" id="confidenceGauge">
+              <span id="confidenceValue">0%</span>
+            </div>
+          </div>
           <p id="resultText">Your result will appear here.</p>
           <div class="confidence-bar">
             <div id="confidenceFill" class="confidence-fill"></div>
           </div>
-          <small id="confidenceValue">0%</small>
         </div>
       </div>
     </section>
   </main>
 
-  <script src="/static/app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
