@@ -1,6 +1,8 @@
 import re
+from pathlib import Path
 import mlflow
 import mlflow.sklearn
+import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -9,6 +11,8 @@ from sklearn.metrics import accuracy_score
 from sklearn.base import BaseEstimator, TransformerMixin
 
 from db import SessionLocal, Review
+
+MODEL_ARTIFACT_PATH = Path(__file__).parent / "artifacts" / "sentiment_model.joblib"
 
 class TextCleaner(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None): 
@@ -66,6 +70,9 @@ def train_model():
         mlflow.log_metric("accuracy", acc)
 
         mlflow.sklearn.log_model(pipeline, "nlp_model_producc")
+        MODEL_ARTIFACT_PATH.parent.mkdir(parents=True, exist_ok=True)
+        joblib.dump(pipeline, MODEL_ARTIFACT_PATH)
+        print(f"Portable model artifact saved at: {MODEL_ARTIFACT_PATH}")
 
 if __name__ == "__main__":
     train_model()
