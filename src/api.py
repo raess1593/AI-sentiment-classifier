@@ -1,11 +1,15 @@
 from contextlib import asynccontextmanager
+from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import mlflow.sklearn
 import mlflow
 
 production_model = None
+STATIC_DIR = Path(__file__).parent / "static"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -45,12 +49,29 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+if STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
 class ReviewRequest(BaseModel):
     text: str
 
 class ReviewResponse(BaseModel):
     sentiment: str
     confidence: float
+
+
+@app.get("/", include_in_schema=False)
+def root():
+    index_file = STATIC_DIR / "index.html"
+    if not index_file.exists():
+        raise HTTPException(status_code=404, detail="Frontend not found.")
+
+    return FileResponse(index_file)
+
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok", "model_loaded": production_model is not None}
 
 @app.post("/predict", response_model=ReviewResponse)
 def predict_sentiment(request: ReviewRequest):
