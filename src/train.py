@@ -1,4 +1,3 @@
-import re
 from pathlib import Path
 import mlflow
 import mlflow.sklearn
@@ -8,18 +7,11 @@ from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
-from sklearn.base import BaseEstimator, TransformerMixin
 
 from db import SessionLocal, Review
+from transformers import TextCleaner
 
 MODEL_ARTIFACT_PATH = Path(__file__).parent / "artifacts" / "sentiment_model.joblib"
-
-class TextCleaner(BaseEstimator, TransformerMixin):
-    def fit(self, X, y=None): 
-        return self
-
-    def transform(self, X, y=None):
-        return [re.sub(r'[^a-záéíóúñ\s]', '', str(text).lower()) for text in X]
 
 
 def train_model():

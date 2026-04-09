@@ -9,6 +9,9 @@ from pydantic import BaseModel
 import mlflow.sklearn
 import mlflow
 import joblib
+from transformers import TextCleaner
+
+_ = TextCleaner
 
 production_model = None
 startup_error = None
